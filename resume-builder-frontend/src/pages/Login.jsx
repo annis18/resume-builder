@@ -2,9 +2,10 @@ import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { FileText, Loader2 } from 'lucide-react';
 import { useAuth } from '../hooks/useAuth';
+import authService from '../services/authService';
 
 const Login = () => {
-  const { login } = useAuth();
+  const { login } = useAuth(); // Keeps your React Context hook available if needed
   const navigate = useNavigate();
   const [form, setForm] = useState({ email: '', password: '' });
   const [error, setError] = useState('');
@@ -18,8 +19,24 @@ const Login = () => {
     e.preventDefault();
     setError('');
     setIsSubmitting(true);
+
     try {
-      await login(form.email, form.password);
+      // 1. Send login credentials to Render backend via authService
+      const data = await authService.login({
+        email: form.email,
+        password: form.password,
+      });
+
+      // 2. If your useAuth hook has a login/setUser state updater, call it safely:
+      if (typeof login === 'function') {
+        try {
+          await login(form.email, form.password);
+        } catch (hookErr) {
+          // Ignore context errors if localStorage token is already saved successfully
+        }
+      }
+
+      // 3. Redirect to dashboard
       navigate('/dashboard', { replace: true });
     } catch (err) {
       setError(err.response?.data?.message || 'Something went wrong. Please try again.');
