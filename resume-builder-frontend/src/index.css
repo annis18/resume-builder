@@ -1,0 +1,56 @@
+@import "tailwindcss";
+
+@theme {
+  --color-paper: #f8f7f3;
+  --color-canvas: #ece9e1;
+  --color-ink: #1b2430;
+  --color-ink-muted: #5b6472;
+  --color-rule: #e1ded4;
+  --color-signal: #1f6f54;
+  --color-signal-warm: #b8752f;
+  --color-danger: #b3261e;
+
+  --font-display: "Fraunces", ui-serif, Georgia, serif;
+  --font-body: "IBM Plex Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-mono: "IBM Plex Mono", ui-monospace, "SFMono-Regular", monospace;
+}
+
+body {
+  font-family: var(--font-body);
+  background-color: var(--color-paper);
+  color: var(--color-ink);
+}
+
+/* Visible keyboard focus everywhere, not just the default browser outline color */
+:focus-visible {
+  outline: 2px solid var(--color-signal);
+  outline-offset: 2px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  *, *::before, *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+  }
+}
+
+/* react-to-print isolates whatever holds the ref into its own print
+   context, so these rules only ever apply to the resume page itself —
+   not the editor UI around it. */
+@media print {
+  @page {
+    size: A4;
+    margin: 0;
+  }
+
+  .resume-page {
+    width: 210mm;
+    min-height: 297mm;
+    max-width: none;
+    padding: 18mm;
+    box-shadow: none;
+    print-color-adjust: exact;
+    -webkit-print-color-adjust: exact;
+  }
+}
